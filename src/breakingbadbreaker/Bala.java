@@ -21,7 +21,7 @@ public class Bala extends Base {
      */
     public Bala(int posX, int posY) {
         super(posX, posY);
-        this.velX = 3;
-        this.velY = 3;
+        this.velX = 1;
+        this.velY = 1;
     }
 }

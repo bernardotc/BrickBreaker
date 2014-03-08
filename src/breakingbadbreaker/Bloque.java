@@ -55,6 +55,30 @@ public class Bloque extends Base {
         b7 = new ImageIcon(imagen);
         contador = (int) ((Math.random() * 8));
     }
+    
+    public Bloque(int posX, int posY, int cont) {
+        super(posX, posY);
+        this.velX = 0;
+        this.velY = 0;
+        Image imagen = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("images/1.png"));
+        ImageIcon image = new ImageIcon(imagen);
+        this.setImageIcon(image);
+        imagen = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("images/2.png"));
+        b1 = new ImageIcon(imagen);
+        imagen = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("images/3.png"));
+        b2 = new ImageIcon(imagen);
+        imagen = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("images/4.png"));
+        b3 = new ImageIcon(imagen);
+        imagen = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("images/5.png"));
+        b4 = new ImageIcon(imagen);
+        imagen = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("images/6.png"));
+        b5 = new ImageIcon(imagen);
+        imagen = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("images/7.png"));
+        b6 = new ImageIcon(imagen);
+        imagen = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("images/8.png"));
+        b7 = new ImageIcon(imagen);
+        contador = cont;
+    }
 
     @Override
     public Image getImagenI() {
