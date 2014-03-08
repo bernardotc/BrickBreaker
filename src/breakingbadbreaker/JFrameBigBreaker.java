@@ -45,9 +45,14 @@ public class JFrameBigBreaker extends JFrame implements Runnable, KeyListener, M
     private float factorAumentoY;   // ayudara a aumentar la velocidad en y
     private Image dbImage;    // Imagen a proyectar
     private Image background;   // imagen que sera background
+    private Image background2;
+    private Image background3;
+    private Image background4;
+    private Image background5;
     private Image inicio;
     private Image vida;
     private Image over;
+    private Image ganar;
     private Graphics dbg;   // Objeto grafico
     private String instr1; // String que contiene las instrucciones del juego.
     private String instr2; // String que contiene las instrucciones del juego.
@@ -58,7 +63,13 @@ public class JFrameBigBreaker extends JFrame implements Runnable, KeyListener, M
     private String nombreArchivo;   // Nombre del archivo
     private String[] arr;   // Arreglo del archivo dividido
     private SoundClip theme;
+    private SoundClip theme2;
+    private SoundClip breaking;
+    private SoundClip lose;
+    private SoundClip jump;
+    private SoundClip extra;
     private int themeCont;
+    private int changeSong;
 
     // banderas
     private boolean empezar;
@@ -78,6 +89,7 @@ public class JFrameBigBreaker extends JFrame implements Runnable, KeyListener, M
     private boolean colision;
     private boolean reset;
     private boolean start;
+    private boolean gane;
 
     // Imagenes adicionales para ambientizar el juego
     private Image im1;
@@ -115,6 +127,15 @@ public class JFrameBigBreaker extends JFrame implements Runnable, KeyListener, M
     private Base rv1;
     private Base rv2;
 
+    private Bala upgrade1;
+    private Bala upgrade2;
+    private Bala upgrade3;
+    private Bala extraVida;
+    private boolean up1;
+    private boolean up2;
+    private boolean up3;
+    private boolean extraLife;
+
     /**
      * Metodo constructor del JFrame donde se inicializan las variables y se
      * empieza el thread de <code>JFrame</code>.
@@ -129,18 +150,36 @@ public class JFrameBigBreaker extends JFrame implements Runnable, KeyListener, M
         sonido = true;
         pausado = false;
         instrucciones = true;
+        gane = false;
 
         theme = new SoundClip("sounds/theme.wav");
+        theme2 = new SoundClip("sounds/theme2.wav");
+        breaking = new SoundClip("sounds/brickbreak.wav");
+        lose = new SoundClip("sounds/stomp.wav");
+        jump = new SoundClip("sounds/jump.wav");
+        extra = new SoundClip("sounds/marioSound.wav");
         themeCont = 0;
+        changeSong = 0;
 
         URL bURL = this.getClass().getResource("images/back1.jpg");
         background = Toolkit.getDefaultToolkit().getImage(bURL);
-        URL instrURL = this.getClass().getResource("images/back8.jpeg");
+        URL b2URL = this.getClass().getResource("images/back4.jpg");
+        background2 = Toolkit.getDefaultToolkit().getImage(b2URL);
+        URL b3URL = this.getClass().getResource("images/back3.jpg");
+        background3 = Toolkit.getDefaultToolkit().getImage(b3URL);
+        URL b4URL = this.getClass().getResource("images/back7.jpg");
+        background4 = Toolkit.getDefaultToolkit().getImage(b4URL);
+        URL b5URL = this.getClass().getResource("images/back6.png");
+        background5 = Toolkit.getDefaultToolkit().getImage(b5URL);
+        URL instrURL = this.getClass().getResource("images/back2.jpg");
         inicio = Toolkit.getDefaultToolkit().getImage(instrURL);
         URL vidaURL = this.getClass().getResource("images/vida.png");
         vida = Toolkit.getDefaultToolkit().getImage(vidaURL);
         URL overURL = this.getClass().getResource("images/back5.jpg");
         over = Toolkit.getDefaultToolkit().getImage(overURL);
+        URL ganarURL = this.getClass().getResource("images/back9.jpg");
+        ganar = Toolkit.getDefaultToolkit().getImage(ganarURL);
+
         setSize(1200, 800);
         setBackground(Color.white);
 
@@ -158,6 +197,11 @@ public class JFrameBigBreaker extends JFrame implements Runnable, KeyListener, M
         instr2 = "moverá a través de la pantalla. Con las teclas izquierda y derecha, podrás mover a la tortuga. Si no llegas ";
         instr3 = "atrapar el caparazón, el caparazón caerá más rápido... ¡CUIDADO! ¡TU PUEDES!";
         instr4 = "Teclas: P = pausa. I = instrucciones. S = sonido. C = Cargar. G = guardar";
+
+        up1 = false;
+        up2 = false;
+        up3 = false;
+        extraLife = false;
 
         // Se cargan los sonidos
         //shell = new SoundClip("sounds/stomp.wav");
@@ -325,6 +369,25 @@ public class JFrameBigBreaker extends JFrame implements Runnable, KeyListener, M
         aux = new ImageIcon(Toolkit.getDefaultToolkit().getImage(bolaURL));
         bola.setImageIcon(aux);
         bola.setPosX(bola.getPosX() - bola.getAncho() / 2);
+
+        upgrade1 = new Bala(getWidth() / 2, getHeight() - 2 * barra.getAlto() - 1);
+        URL up1URL = this.getClass().getResource("images/upgrade1.png");
+        aux = new ImageIcon(Toolkit.getDefaultToolkit().getImage(up1URL));
+        upgrade1.setImageIcon(aux);
+
+        upgrade2 = new Bala(getWidth() / 2, getHeight() - 2 * barra.getAlto() - 1);
+        URL up2URL = this.getClass().getResource("images/upgrade2.png");
+        aux = new ImageIcon(Toolkit.getDefaultToolkit().getImage(up2URL));
+        upgrade2.setImageIcon(aux);
+
+        upgrade3 = new Bala(getWidth() / 2, getHeight() - 2 * barra.getAlto() - 1);
+        URL up3URL = this.getClass().getResource("images/upgrade3.png");
+        aux = new ImageIcon(Toolkit.getDefaultToolkit().getImage(up3URL));
+        upgrade3.setImageIcon(aux);
+
+        extraVida = new Bala(getWidth() / 2, getHeight() - 2 * barra.getAlto() - 1);
+        aux = new ImageIcon(vida);
+        extraVida.setImageIcon(aux);
     }
 
     public void start() {
@@ -888,8 +951,14 @@ public class JFrameBigBreaker extends JFrame implements Runnable, KeyListener, M
     public void run() {
         while (true) {
             if (themeCont <= 0) {
-                theme.play();
-                themeCont = 13000;
+                if (changeSong % 2 == 0) {
+                    theme.play();
+                    themeCont = 13000;
+                } else {
+                    theme2.play();
+                    themeCont = 84000;
+                }
+                changeSong++;
             }
             themeCont--;
             //Si el juego no ha terminado hacer
@@ -1064,14 +1133,20 @@ public class JFrameBigBreaker extends JFrame implements Runnable, KeyListener, M
             bola.setPosX(bola.getPosX() - bola.getAncho() / 2);
             bola.setVelX(1);
             bola.setVelY(1);
+            up1 = false;
+            up2 = false;
+            up3 = false;
+            extraLife = false;
 
             if (lvl1) {
                 gameOver = true;
-                rv1.setPosX(150);
-                rv1.setPosY(450);
-                rv2.setPosX(980);
-                rv2.setPosY(450);
+                gane = true;
             }
+            if (lvl5 && level == 6) {
+                gameOver = true;
+                gane = true;
+            }
+
             if (level == 2) {
                 level2();
             } else if (level == 3) {
@@ -1083,6 +1158,18 @@ public class JFrameBigBreaker extends JFrame implements Runnable, KeyListener, M
             }
         }
 
+        if (up1) {
+            upgrade1.setPosY(upgrade1.getPosY() + (int) upgrade1.getVelY());
+        }
+        if (up2) {
+            upgrade2.setPosY(upgrade2.getPosY() + (int) upgrade2.getVelY());
+        }
+        if (up3) {
+            upgrade3.setPosY(upgrade3.getPosY() + (int) upgrade3.getVelY());
+        }
+        if (extraLife) {
+            extraVida.setPosY(extraVida.getPosY() + (int) extraVida.getVelY());
+        }
     }
 
     /**
@@ -1111,6 +1198,76 @@ public class JFrameBigBreaker extends JFrame implements Runnable, KeyListener, M
             bola.setVelX(1);
             bola.setVelY(1);
             vidas--;
+            up1 = false;
+            up2 = false;
+            up3 = false;
+            extraLife = false;
+            if (sonido) {
+                lose.play();
+            }
+        }
+
+        if (up1) {
+            if (upgrade1.getPosY() + upgrade1.getAlto() > getHeight()) {
+                up1 = false;
+            } else if (upgrade1.intersecta(barra)) {
+                if (sonido) {
+                    extra.play();
+                }
+                score += 500;
+                up1 = false;
+            }
+        }
+        if (up2) {
+            if (upgrade2.getPosY() + upgrade2.getAlto() > getHeight()) {
+                up2 = false;
+            } else if (upgrade2.intersecta(barra)) {
+                if (sonido) {
+                    extra.play();
+                }
+                if (bola.getVelX() < 0) {
+                    bola.setVelX(-1);
+                } else {
+                    bola.setVelX(1);
+                }
+                if (bola.getVelY() < 0) {
+                    bola.setVelY(-1);
+                } else {
+                    bola.setVelY(1);
+                }
+                up2 = false;
+            }
+        }
+        if (up3) {
+            if (upgrade3.getPosY() + upgrade3.getAlto() > getHeight()) {
+                up3 = false;
+            } else if (upgrade3.intersecta(barra)) {
+                if (sonido) {
+                    extra.play();
+                }
+                for (int x = 0; x < blockSize; x++) {
+                    Bloque bl = (Bloque) lista.get(x);
+                    if (bl.getContador() >= 0) {
+                        score += 100;
+                        bl.setContador(bl.getContador() - 1);
+                        if (bl.getContador() == -1) {
+                            blockHit -= 1;
+                        }
+                    }
+                }
+                up3 = false;
+            }
+        }
+        if (extraLife) {
+            if (extraVida.getPosY() + extraVida.getAlto() > getHeight()) {
+                extraLife = false;
+            } else if (extraVida.intersecta(barra)) {
+                if (sonido) {
+                    extra.play();
+                }
+                vidas++;
+                extraLife = false;
+            }
         }
 
         if (barra.getPosX() < 0) {
@@ -1129,6 +1286,9 @@ public class JFrameBigBreaker extends JFrame implements Runnable, KeyListener, M
              bola.setVelX(-bola.getVelX());
              }*/
             //bola.setVelX((float) ((bola.getPosX()-barra.getPosX()) / (barra.getAncho() - bola.getAncho()) - .5) * 5);
+            if (sonido) {
+                jump.play();
+            }
             rebote = 1;
             bola.setPosY(getHeight() - 2 * barra.getAlto() - 1);
             int posBola = bola.getPosX() + bola.getAncho() / 2;
@@ -1150,6 +1310,32 @@ public class JFrameBigBreaker extends JFrame implements Runnable, KeyListener, M
             Bloque aux = (Bloque) lista.get(c);
             if (aux.getContador() >= 0) {
                 if (bola.intersecta(aux)) {
+                    if (sonido) {
+                        breaking.play();
+                    }
+
+                    int up = (int) (Math.random() * 100);
+                    if (!up1 && up < 30) {
+                        up1 = true;
+                        upgrade1.setPosX(aux.getPosX() + aux.getAncho() / 2);
+                        upgrade1.setPosY(aux.getPosY() + aux.getAlto() / 2);
+                    }
+                    if (!up2 && up >= 50 && up <= 51) {
+                        up2 = true;
+                        upgrade2.setPosX(aux.getPosX() + aux.getAncho() / 2);
+                        upgrade2.setPosY(aux.getPosY() + aux.getAlto() / 2);
+                    }
+                    if (!up3 && up >= 60 && up <= 61) {
+                        up3 = true;
+                        upgrade3.setPosX(aux.getPosX() + aux.getAncho() / 2);
+                        upgrade3.setPosY(aux.getPosY() + aux.getAlto() / 2);
+                    }
+                    if (!extraLife && up == 99) {
+                        extraLife = true;
+                        extraVida.setPosX(aux.getPosX() + aux.getAncho() / 2);
+                        extraVida.setPosY(aux.getPosY() + aux.getAlto() / 2);
+                    }
+
                     score += 100;
                     aux.setContador(aux.getContador() - 1);
                     if (aux.getContador() == -1) {
@@ -1186,7 +1372,7 @@ public class JFrameBigBreaker extends JFrame implements Runnable, KeyListener, M
                 }
             }
         }
-        // Si la tortuga esta colisionando con el caparazon
+            // Si la tortuga esta colisionando con el caparazon
         /*if (tortuga.intersecta(caparazon)) {
          colision = true;
          }
@@ -1290,6 +1476,7 @@ public class JFrameBigBreaker extends JFrame implements Runnable, KeyListener, M
          }*/
         if (rv1.intersecta(e.getX(), e.getY())) {
             gameOver = false;
+            gane = false;
             start = true;
             instrucciones = false;
             lvl1 = true;
@@ -1299,6 +1486,7 @@ public class JFrameBigBreaker extends JFrame implements Runnable, KeyListener, M
             init();
         } else if (rv2.intersecta(e.getX(), e.getY())) {
             gameOver = false;
+            gane = false;
             start = true;
             instrucciones = false;
             lvl5 = true;
@@ -1361,7 +1549,7 @@ public class JFrameBigBreaker extends JFrame implements Runnable, KeyListener, M
                 pausado = true;
             }
         } else if (e.getKeyCode() == KeyEvent.VK_I) { // Si se presiona I
-            if (instrucciones) {
+            if (instrucciones && start) {
                 instrucciones = false;
                 pausado = false;
             } else {
@@ -1521,10 +1709,28 @@ public class JFrameBigBreaker extends JFrame implements Runnable, KeyListener, M
             } else {
                 g.setFont(new Font("Arial", Font.PLAIN, 20));
                 g.setColor(Color.RED);
-                g.drawImage(background, 0, 0, this);
+                if (level == 1) {
+                    g.drawImage(background, 0, 0, this);
+                } else if (level == 2) {
+                    g.drawImage(background2, 0, 0, this);
+                } else if (level == 3) {
+                    g.drawImage(background3, 0, 0, this);
+                } else if (level == 4) {
+                    g.drawImage(background4, 0, 0, this);
+                } else if (level == 5) {
+                    g.drawImage(background5, 0, 0, this);
+                }
                 g.drawString("Vidas", 10, 45);
                 g.setColor(Color.orange);
                 g.drawString("Score: " + score, 70, 45);
+                String auxi;
+                if (sonido) {
+                    auxi = "Si";
+                } else {
+                    auxi = "No";
+                }
+                g.setColor(Color.black);
+                g.drawString("Sonido: " + auxi, 1100, 45);
                 for (int v = 0, pos = 10; v < vidas; v++, pos += 20) {
                     g.drawImage(vida, pos, 50, this);
                 }
@@ -1534,14 +1740,33 @@ public class JFrameBigBreaker extends JFrame implements Runnable, KeyListener, M
                         g.drawImage(aux.getImagenI(), aux.getPosX(), aux.getPosY(), this);
                     }
                 }
+                if (up1) {
+                    g.drawImage(upgrade1.getImagenI(), upgrade1.getPosX(), upgrade1.getPosY(), this);
+                }
+                if (up2) {
+                    g.drawImage(upgrade2.getImagenI(), upgrade2.getPosX(), upgrade2.getPosY(), this);
+                }
+                if (up3) {
+                    g.drawImage(upgrade3.getImagenI(), upgrade3.getPosX(), upgrade3.getPosY(), this);
+                }
+                if (extraLife) {
+                    g.drawImage(extraVida.getImagenI(), extraVida.getPosX(), extraVida.getPosY(), this);
+                }
                 g.drawImage(barra.getImagenI(), barra.getPosX(), barra.getPosY(), this);
                 g.drawImage(bola.getImagenI(), bola.getPosX(), bola.getPosY(), this);
             }
         } else {
-            g.drawImage(over, 0, 0, this);
-            g.setFont(new Font("Arial", Font.PLAIN, 40));
-            g.setColor(Color.red);
-            g.drawString("" + score, 130, 280);
+            if (gane) {
+                g.drawImage(ganar, 0, 0, this);
+                g.setFont(new Font("Arial", Font.PLAIN, 40));
+                g.setColor(Color.red);
+                g.drawString("Score: " + score, 130, 400);
+            } else {
+                g.drawImage(over, 0, 0, this);
+                g.setFont(new Font("Arial", Font.PLAIN, 40));
+                g.setColor(Color.red);
+                g.drawString("" + score, 130, 280);
+            }
             g.drawImage(rv1.getImagenI(), rv1.getPosX(), rv1.getPosY(), this);
             g.drawImage(rv2.getImagenI(), rv2.getPosX(), rv2.getPosY(), this);
         }
