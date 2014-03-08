@@ -152,6 +152,7 @@ public class JFrameBigBreaker extends JFrame implements Runnable, KeyListener, M
         instrucciones = true;
         gane = false;
 
+        //se cargan los sonicods
         theme = new SoundClip("sounds/theme.wav");
         theme2 = new SoundClip("sounds/theme2.wav");
         breaking = new SoundClip("sounds/brickbreak.wav");
@@ -161,6 +162,7 @@ public class JFrameBigBreaker extends JFrame implements Runnable, KeyListener, M
         themeCont = 0;
         changeSong = 0;
 
+        //se cargan las imagenes
         URL bURL = this.getClass().getResource("images/back1.jpg");
         background = Toolkit.getDefaultToolkit().getImage(bURL);
         URL b2URL = this.getClass().getResource("images/back4.jpg");
@@ -206,6 +208,7 @@ public class JFrameBigBreaker extends JFrame implements Runnable, KeyListener, M
         // Se cargan los sonidos
         //shell = new SoundClip("sounds/stomp.wav");
         //catched = new SoundClip("sounds/marioSound.wav");
+        //se genera el nivel
         level = 1;
         lista = new LinkedList();
         blockSize = 50;
@@ -332,21 +335,6 @@ public class JFrameBigBreaker extends JFrame implements Runnable, KeyListener, M
         click = false;
         volando = false;
 
-        // Se inicializan las imagenes ambientales
-        /*URL bURL = this.getClass().getResource("images/back.png");
-         background = Toolkit.getDefaultToolkit().getImage(bURL);
-         URL cURL = this.getClass().getResource("images/redShell4.png");
-         URL dURL = this.getClass().getResource("images/koopa2_2.png");
-         URL eURL = this.getClass().getResource("images/block.png");
-         URL fURL = this.getClass().getResource("images/plant.png");
-         im1 = Toolkit.getDefaultToolkit().getImage(cURL);
-         im2 = Toolkit.getDefaultToolkit().getImage(dURL);
-         block = Toolkit.getDefaultToolkit().getImage(eURL);
-         plant = Toolkit.getDefaultToolkit().getImage(fURL);*/
-        //Tamaño del JFrame
-        //Se crean objetos
-        //tortuga = new Tortuga(getWidth() / 2, (getHeight() - 120));
-        //caparazon = new Caparazon(5, getHeight() / 2);
         rv1 = new Base(200, 720);
         rv2 = new Base(880, 720);
         URL rvURL = this.getClass().getResource("images/rv1.jpg");
@@ -356,6 +344,7 @@ public class JFrameBigBreaker extends JFrame implements Runnable, KeyListener, M
         rv1.setImageIcon(carro);
         rv2.setImageIcon(carroo);
 
+        //objeto de la barra
         barra = new Barra(getWidth() / 2, getHeight());
         URL barraURL = this.getClass().getResource("images/barra.png");
         ImageIcon aux;
@@ -364,28 +353,34 @@ public class JFrameBigBreaker extends JFrame implements Runnable, KeyListener, M
         barra.setPosY(barra.getPosY() - barra.getAlto());
         barra.setPosX(barra.getPosX() - barra.getAncho() / 2);
 
+        //objeto de la bala
         bola = new Bala(getWidth() / 2, getHeight() - 2 * barra.getAlto() - 1);
         URL bolaURL = this.getClass().getResource("images/bola.png");
         aux = new ImageIcon(Toolkit.getDefaultToolkit().getImage(bolaURL));
         bola.setImageIcon(aux);
         bola.setPosX(bola.getPosX() - bola.getAncho() / 2);
 
+        //los upgrades y vidas extras
         upgrade1 = new Bala(getWidth() / 2, getHeight() - 2 * barra.getAlto() - 1);
+        upgrade1.setVelY((int) ((Math.random() * 2)) + 1);
         URL up1URL = this.getClass().getResource("images/upgrade1.png");
         aux = new ImageIcon(Toolkit.getDefaultToolkit().getImage(up1URL));
         upgrade1.setImageIcon(aux);
 
         upgrade2 = new Bala(getWidth() / 2, getHeight() - 2 * barra.getAlto() - 1);
+        upgrade1.setVelY((int) ((Math.random() * 2)) + 1);
         URL up2URL = this.getClass().getResource("images/upgrade2.png");
         aux = new ImageIcon(Toolkit.getDefaultToolkit().getImage(up2URL));
         upgrade2.setImageIcon(aux);
 
         upgrade3 = new Bala(getWidth() / 2, getHeight() - 2 * barra.getAlto() - 1);
+        upgrade1.setVelY((int) ((Math.random() * 2)) + 1);
         URL up3URL = this.getClass().getResource("images/upgrade3.png");
         aux = new ImageIcon(Toolkit.getDefaultToolkit().getImage(up3URL));
         upgrade3.setImageIcon(aux);
 
         extraVida = new Bala(getWidth() / 2, getHeight() - 2 * barra.getAlto() - 1);
+        upgrade1.setVelY((int) ((Math.random() * 2)) + 1);
         aux = new ImageIcon(vida);
         extraVida.setImageIcon(aux);
     }
@@ -1015,14 +1010,6 @@ public class JFrameBigBreaker extends JFrame implements Runnable, KeyListener, M
             rv2.setPosY(450);
         }
 
-                // Mientras el objeto va volando
-                /*if (volando) {
-         caparazon.gravedad(factorGravedad);
-         int x = (int) Math.round(caparazon.getVelX());
-         int y = (int) Math.round(caparazon.getVelY());
-         caparazon.setPosX(caparazon.getPosX() + x);
-         caparazon.setPosY(caparazon.getPosY() + y);
-         }*/
         // Si se esta presionando la tecla izquierda
         if (izquierda) {
             barra.setVelX(barra.getVelX() - (float) .5);
@@ -1068,63 +1055,6 @@ public class JFrameBigBreaker extends JFrame implements Runnable, KeyListener, M
             }
         }
 
-        /*// Actualizar la posicion de la tortuga
-         int x = (int) Math.round(tortuga.getVelX());
-         tortuga.setPosX(x + tortuga.getPosX());
-         tortuga.gravedad();
-         // Si se prendio la bandera de colision, reacomodar el caparazon
-         if (colision) {
-         if (sonido) {
-         catched.play();
-         }
-         caparazon.setPosX(0);
-         caparazon.setPosY(getHeight() / 2);
-         caparazon.setVelX(0);
-         caparazon.setVelY(0);
-         volando = false;
-         colision = false;
-         // Aumentar en dos el score
-         score += 2;
-         }
-         // Si se quiere cargar el juego (Asegurarse de que no este en instrucciones)
-         if (cargar && !instrucciones) {
-         try {
-         leeArchivo();
-         // asignar valores usando los auxiliares
-         caparazon.setPosX(cPosX);
-         caparazon.setPosY(cPosY);
-         caparazon.setVelX(cVelX);
-         caparazon.setVelY(cVelY);
-         click = c;
-         volando = v;
-         tortuga.setPosX(tPosX);
-         tortuga.setPosY(tPosY);
-         tortuga.setVelX(tVelX);
-         score = scr;
-         vidas = vid;
-         contadorVidas = contVid;
-         factorGravedad = fG;
-         factorAumento = fA;
-         factorAumentoY = fAY;
-         sonido = son;
-         } catch (IOException e) {
-         System.out.println("Error en " + e.toString());
-         }
-         cargar = false;
-         } else {
-         cargar = false;
-         }
-         // Si se quiere guardar el juego (Asegurarse de que no este en instrucciones)
-         if (guardar && !instrucciones) {
-         try {
-         grabaArchivo();
-         } catch (IOException e) {
-         System.out.println("Error en " + e.toString());
-         }
-         guardar = false;
-         } else {
-         guardar = false;
-         }*/
         if (blockHit == 0) {
             level += 1;
             empezar = false;
@@ -1280,12 +1210,6 @@ public class JFrameBigBreaker extends JFrame implements Runnable, KeyListener, M
         }
 
         if (bola.intersecta(barra)) {
-            /*if (bola.getPosX() + bola.getAncho() / 2 < barra.getPosX() + barra.getAncho() / 2) {
-             bola.setVelX(-bola.getVelX());
-             } else {
-             bola.setVelX(-bola.getVelX());
-             }*/
-            //bola.setVelX((float) ((bola.getPosX()-barra.getPosX()) / (barra.getAncho() - bola.getAncho()) - .5) * 5);
             if (sonido) {
                 jump.play();
             }
@@ -1372,32 +1296,6 @@ public class JFrameBigBreaker extends JFrame implements Runnable, KeyListener, M
                 }
             }
         }
-            // Si la tortuga esta colisionando con el caparazon
-        /*if (tortuga.intersecta(caparazon)) {
-         colision = true;
-         }
-         // Si el caparazon llega al suelo
-         if (caparazon.getPosY() > getHeight()) {
-         if (sonido) {
-         shell.play();
-         }
-         contadorVidas--;
-         volando = false;
-         caparazon.setPosY(getHeight() / 2);
-         caparazon.setPosX(0);
-         caparazon.setVelX(0);
-         caparazon.setVelY(0);
-         }
-         // Limitar a que la tortuga no pase de la mitad derecha a la izquierda
-         if (tortuga.getPosX() < getWidth() / 2) {
-         tortuga.setVelX(tortuga.getVelX() * -1);
-         tortuga.setPosX(getWidth() / 2);
-         }
-         // Limitar a que la tortuga no se salga del frame
-         if (tortuga.getPosX() > getWidth() - tortuga.getAncho()) {
-         tortuga.setVelX(tortuga.getVelX() * -1);
-         tortuga.setPosX(getWidth() - tortuga.getAncho());
-         }*/
     }
 
     /**
@@ -1770,62 +1668,5 @@ public class JFrameBigBreaker extends JFrame implements Runnable, KeyListener, M
             g.drawImage(rv1.getImagenI(), rv1.getPosX(), rv1.getPosY(), this);
             g.drawImage(rv2.getImagenI(), rv2.getPosX(), rv2.getPosY(), this);
         }
-        /*g.setColor(Color.black);
-         if (!gameOver) {
-         if (caparazon != null && tortuga != null) {
-         // Mostrar background
-         g.drawImage(background, 0, 0, this);
-         // Mostrar puntuacion, vida y sonido
-         g.drawString("Puntuacion: " + score, 5, 40);
-         g.drawString("Vidas: " + vidas, 5, 60);
-         String aux;
-         if (sonido) {
-         aux = "Si";
-         } else {
-         aux = "No";
-         }
-         g.drawString("Sonido: " + aux, 5, 80);
-         // Si esta pausado, mostrarlo
-         if (pausado) {
-         g.drawString("Pausado", getWidth() / 2, getHeight() / 2);
-         }
-         // Dibujar objetos inanimados
-         g.drawImage(block, 7, 300, this);
-         g.drawImage(plant, getWidth() / 2 - 60, getHeight() - 140, this);
-         // Checar si el objeto esta en movimiento
-         if (volando) {
-         g.drawImage(caparazon.getImagenI(), caparazon.getPosX(), caparazon.getPosY(), this);
-         } else {
-         g.drawImage(im1, caparazon.getPosX(), caparazon.getPosY(), this);
-         }
-         // Checar si la tortuga esta en movimiento
-         if (tortuga.getVelX() != 0) {
-         g.drawImage(tortuga.getImagenI(), tortuga.getPosX(), tortuga.getPosY(), this);
-
-         } else {
-         g.drawImage(im2, tortuga.getPosX(), tortuga.getPosY(), this);
-         }
-         // Desplegar instrucciones
-         if (instrucciones) {
-         g.setColor(Color.orange);
-         g.drawString(instr1, 20, 120);
-         g.drawString(instr2, 20, 140);
-         g.drawString(instr3, 20, 160);
-         g.drawString(instr4, 20, 180);
-         }
-         } else {
-         //Da un mensaje mientras se carga el dibujo	
-         g.drawString("No se cargo la imagen..", 20, 20);
-         }
-         } else {
-         // Desplegar game over y credits
-         g.drawImage(background, 0, 0, this);
-         g.drawString("GAMEOVER", getWidth() / 2, getHeight() / 2);
-         g.drawString("Hecho por:", 20, 120);
-         g.drawString("Sergio Cordero", 20, 140);
-         g.drawString("Bernardo Treviño", 20, 160);
-         g.drawString("Tarea hecha para el profesor Mejorado. ¡Diviértase!", 20, 180);
-         }*/
-
     }
 }
